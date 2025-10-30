@@ -1,0 +1,13 @@
+INFO:__main__:💬 ASI:One Chat Protocol enabled!
+INFO:__main__:🦸 Starting AgentIntake...
+INFO:__main__:🌐 HTTP server will run on port 8101
+INFO:     [intake_agent]: Starting agent with address: agent1qw08u04nu2t9hrf88tx65sf5asf7hyd438dw93sn0hq863ducxpjv2kwvws
+INFO:     [intake_agent]: 🚀 AgentIntake iniciado!
+INFO:     [intake_agent]: 📍 Address: agent1qw08u04nu2t9hrf88tx65sf5asf7hyd438dw93sn0hq863ducxpjv2kwvws
+INFO:     [intake_agent]: 🔗 Endpoint: [AgentEndpoint(url='http://localhost:8001/submit', weight=1)]
+INFO:     [intake_agent]: Agent inspector available at https://agentverse.ai/inspect/?uri=http%3A//127.0.0.1%3A8001&address=agent1qw08u04nu2t9hrf88tx65sf5asf7hyd438dw93sn0hq863ducxpjv2kwvws
+INFO:     [intake_agent]: Starting server on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [intake_agent]: Manifest published successfully: AgentChatProtocol
+INFO:     [mailbox]: Successfully registered as mailbox agent in Agentverse

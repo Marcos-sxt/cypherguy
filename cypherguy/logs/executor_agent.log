@@ -1,0 +1,33 @@
+INFO:__main__:⛓️ Starting AgentExecutor...
+INFO:__main__:🌐 HTTP server will run on port 8104
+INFO:     [executor_agent]: Starting agent with address: agent1qgnz8v0ej4hdragwck42lt9eahf24n4wwv8w66z3dr8y6x2qzvzpczrmh3k
+INFO:     [executor_agent]: ⛓️ AgentExecutor iniciado!
+INFO:     [executor_agent]: 📍 Address: agent1qgnz8v0ej4hdragwck42lt9eahf24n4wwv8w66z3dr8y6x2qzvzpczrmh3k
+INFO:__main__:✅ Wallet loaded: 7aesM19NoQvV8Xugnt2RKpsX83cdf6sRJXrGTFPD1pie
+INFO:     [executor_agent]: 💳 Wallet: 7aesM19NoQvV8Xugnt2RKpsX83cdf6sRJXrGTFPD1pie
+INFO:     Started server process [254226]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8104 (Press CTRL+C to quit)
+INFO:     [executor_agent]: 🔗 Solana Devnet client created
+INFO:     [executor_agent]: Agent inspector available at https://agentverse.ai/inspect/?uri=http%3A//127.0.0.1%3A8004&address=agent1qgnz8v0ej4hdragwck42lt9eahf24n4wwv8w66z3dr8y6x2qzvzpczrmh3k
+INFO:     [executor_agent]: Starting server on http://0.0.0.0:8004 (Press CTRL+C to quit)
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:httpx:HTTP Request: POST https://api.devnet.solana.com "HTTP/1.1 200 OK"
+INFO:     [executor_agent]: 💰 Balance: 5.0000 SOL
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Registering on almanac contract...
+INFO:     [uagents.registration]: Registering on almanac contract...complete
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!

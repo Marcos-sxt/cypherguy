@@ -1,0 +1,4 @@
+"""
+CypherGuy Agent Protocols
+"""
+

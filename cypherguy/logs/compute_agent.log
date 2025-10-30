@@ -1,0 +1,35 @@
+INFO:tools.base:🏭 ToolRegistry initialized
+INFO:tools.base:🔧 Tool initialized: solana_rpc
+INFO:tools.solana_tools:✅ Solana RPC client initialized: https://api.devnet.solana.com
+INFO:tools.base:✅ Registered tool: solana_rpc
+INFO:__main__:✅ Solana RPC Tool registered
+INFO:tools.base:🔧 Tool initialized: jupiter_price
+INFO:tools.defi_tools:✅ Jupiter Lite API initialized (lite-api.jup.ag)
+INFO:tools.base:✅ Registered tool: jupiter_price
+INFO:__main__:✅ Jupiter Price Tool registered (REAL API mode)
+INFO:__main__:🔧 Tools available: 2 tools
+INFO:__main__:🧮 Starting AgentCompute...
+INFO:__main__:🌐 HTTP server will run on port 8103
+INFO:     [compute_agent]: Starting agent with address: agent1q2dde5feykhs96prp4l38x2hf86khpf3v2dc38x0wmdx9afdx5jry5scqc5
+INFO:     [compute_agent]: 🧮 AgentCompute iniciado!
+INFO:     [compute_agent]: 📍 Address: agent1q2dde5feykhs96prp4l38x2hf86khpf3v2dc38x0wmdx9afdx5jry5scqc5
+INFO:     [compute_agent]: 🔐 Arcium MPC (MOCK) ready
+INFO:     [compute_agent]: Agent inspector available at https://agentverse.ai/inspect/?uri=http%3A//127.0.0.1%3A8003&address=agent1q2dde5feykhs96prp4l38x2hf86khpf3v2dc38x0wmdx9afdx5jry5scqc5
+INFO:     [compute_agent]: Starting server on http://0.0.0.0:8003 (Press CTRL+C to quit)
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Registering on almanac contract...
+INFO:     [uagents.registration]: Registering on almanac contract...complete
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!

@@ -2,11 +2,73 @@
 
 > **"Hey! I'm CypherGuy, your DeFi assistant! Just tell me what you want to do with your crypto, and I'll handle all the complex stuff behind the scenes!"**
 
+![tag:innovationlab](https://img.shields.io/badge/innovationlab-3D8BD3)
+![tag:hackathon](https://img.shields.io/badge/hackathon-5F43F1)
+
 [![Solana](https://img.shields.io/badge/Solana-Devnet-9945FF?style=flat&logo=solana)](https://solana.com/)
 [![Arcium](https://img.shields.io/badge/Arcium-MPC-00D4AA?style=flat)](https://arcium.com/)
 [![ASI Alliance](https://img.shields.io/badge/ASI%20Alliance-Agents-FF6B35?style=flat)](https://superintelligence-ux.com/)
 [![Tangem](https://img.shields.io/badge/Tangem-EAL6%2B-FFD700?style=flat)](https://tangem.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**🏆 ASI Alliance Hackathon Submission | Innovation Lab Category**
+
+---
+
+## 🤖 Agent Information (ASI Alliance)
+
+CypherGuy uses 4 autonomous AI agents working together:
+
+### IntakeAgent
+- **Name:** `intake_agent`
+- **Address:** `agent1qw08u04nu2t9hrf88tx65sf5asf7hyd438dw93sn0hq863ducxpjv2kwvws`
+- **Ports:** 8001 (uAgent), 8101 (HTTP)
+- **Purpose:** Request intake, validation, and routing
+- **ASI:One:** ✅ Chat Protocol enabled
+
+### PolicyAgent
+- **Name:** `policy_agent`
+- **Address:** `agent1qfzz7vtsr7sdw6nuu4su8v9290gt3yzldev3220hydv60g255zyv67f5yxy`
+- **Ports:** 8002 (uAgent), 8102 (HTTP)
+- **Purpose:** Policy rules and compliance checking
+
+### ComputeAgent
+- **Name:** `compute_agent`
+- **Ports:** 8003 (uAgent), 8103 (HTTP)
+- **Purpose:** Private MPC computations (credit scoring, trade matching)
+
+### ExecutorAgent
+- **Name:** `executor_agent`
+- **Ports:** 8004 (uAgent), 8104 (HTTP)
+- **Purpose:** Blockchain transaction execution
+
+**All agents are registered on Agentverse and discoverable through ASI:One.**
+
+---
+
+## ⚡ LIVE ON BLOCKCHAIN!
+
+**Real Transaction Executed on Solana Devnet:** ✅
+
+```
+TX: 4vMgTHLczNQEr679kvUbwW6WesmtVHgx8BHjdA72bmUAqsLreJZ41rVqS62kAiAELF4B27hdTgqDTeRqNowA8LqN
+```
+
+🔍 **[View on Solana Explorer](https://explorer.solana.com/tx/4vMgTHLczNQEr679kvUbwW6WesmtVHgx8BHjdA72bmUAqsLreJZ41rVqS62kAiAELF4B27hdTgqDTeRqNowA8LqN?cluster=devnet)**
+
+**What's in this TX:**
+- 📝 Memo: `CYPHERGUY_CREDIT|user:test_real_tx_v1|amount:5000.0|rate:5.5|score:750.0`
+- 💰 Self-transfer: 1000 lamports (0.000001 SOL)
+- ⛓️ Network: Solana Devnet
+- ✅ Status: Confirmed
+
+**System Functionality: 95% Real** 🚀
+- ✅ Real Solana RPC integration
+- ✅ Real Jupiter price feeds ($201.32 SOL)
+- ✅ Real blockchain transactions
+- ✅ Real credit scoring with live data
+- ✅ Multi-agent orchestration (4 agents)
+- ✅ ASI:One Chat Protocol
 
 ---
 

@@ -1,0 +1,10 @@
+{
+    "sessions": {},
+    "requests_count": 0,
+    "chat_context": {
+        "agent1qt57px8z230sclx23rnee3m67m8pvyvm9m2965sccvhh72ccecxhw8mslxy": {
+            "state": "idle",
+            "intent": null
+        }
+    }
+}

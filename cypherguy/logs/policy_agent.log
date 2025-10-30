@@ -1,0 +1,31 @@
+WARNING:metta.meetta_engine:⚠️ hyperon not available - MeTTa engine will use Python fallback
+INFO:__main__:🛡️ Starting AgentPolicy...
+INFO:__main__:🌐 HTTP server will run on port 8102
+INFO:     [policy_agent]: Starting agent with address: agent1qfzz7vtsr7sdw6nuu4su8v9290gt3yzldev3220hydv60g255zyv67f5yxy
+INFO:     [policy_agent]: 🛡️ AgentPolicy iniciado!
+INFO:     [policy_agent]: 📍 Address: agent1qfzz7vtsr7sdw6nuu4su8v9290gt3yzldev3220hydv60g255zyv67f5yxy
+INFO:metta.meetta_engine:ℹ️ MeTTa not available - using Python fallback (fully functional)
+INFO:     [policy_agent]: ℹ️ MeTTa engine using Python fallback (fully functional)
+INFO:     [policy_agent]: 📋 Rules loaded: credit, rwa, trade, automation
+INFO:     [policy_agent]: Agent inspector available at https://agentverse.ai/inspect/?uri=http%3A//127.0.0.1%3A8002&address=agent1qfzz7vtsr7sdw6nuu4su8v9290gt3yzldev3220hydv60g255zyv67f5yxy
+INFO:     [policy_agent]: Starting server on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:__main__:🛡️ HTTP: Checking credit policy for test_metta: $5000.0
+INFO:__main__:✅ Policy APPROVED: All credit rules passed
+ERROR:__main__:❌ Error calling compute agent: Cannot connect to host localhost:8103 ssl:default [Connect call failed ('127.0.0.1', 8103)]
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Registering on almanac contract...
+INFO:     [uagents.registration]: Registering on almanac contract...complete
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
+INFO:     [uagents.registration]: Registration on Almanac API successful
+INFO:     [uagents.registration]: Almanac contract registration is up to date!
