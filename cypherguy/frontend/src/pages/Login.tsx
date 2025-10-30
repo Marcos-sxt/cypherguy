@@ -28,7 +28,7 @@ export default function Login() {
             <img 
               src={logo} 
               alt="CypherGuy" 
-              className="w-24 h-24 animate-float"
+              className="w-24 h-24"
             />
             {isConnecting && (
               <div className="absolute inset-0 rounded-full pulse-glow" />

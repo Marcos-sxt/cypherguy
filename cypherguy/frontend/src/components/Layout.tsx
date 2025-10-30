@@ -22,7 +22,7 @@ export default function Layout({ children, showNav = true }: LayoutProps) {
       {/* Top Header with Logo */}
       <header className="p-4 flex justify-center items-center relative">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="CypherGuy" className="w-10 h-10 animate-float" />
+          <img src={logo} alt="CypherGuy" className="w-10 h-10" />
           <h1 className="text-2xl font-bold gradient-text">CypherGuy</h1>
         </div>
       </header>
