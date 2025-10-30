@@ -7,17 +7,25 @@ import asyncio
 from typing import Dict, Any
 import logging
 
+from backend.settings import (
+    AGENT_INTAKE_URL,
+    AGENT_POLICY_URL,
+    AGENT_COMPUTE_URL,
+    AGENT_EXECUTOR_URL,
+    HTTP_TIMEOUT_SECS,
+)
+
 logger = logging.getLogger(__name__)
 
 class AgentClient:
     """Cliente para comunicação com agents via HTTP"""
     
     def __init__(self):
-        # HTTP endpoints dos agents
-        self.intake_endpoint = "http://localhost:8101"
-        self.policy_endpoint = "http://localhost:8102"
-        self.compute_endpoint = "http://localhost:8103"
-        self.executor_endpoint = "http://localhost:8104"
+        # HTTP endpoints dos agents (configuráveis via env)
+        self.intake_endpoint = AGENT_INTAKE_URL
+        self.policy_endpoint = AGENT_POLICY_URL
+        self.compute_endpoint = AGENT_COMPUTE_URL
+        self.executor_endpoint = AGENT_EXECUTOR_URL
         
         logger.info("🔗 AgentClient initialized")
         logger.info(f"   Intake:  {self.intake_endpoint}")
@@ -29,9 +37,9 @@ class AgentClient:
         """Verificar se um agent está online"""
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(f"{endpoint}/health", timeout=aiohttp.ClientTimeout(total=2)) as response:
+                async with session.get(f"{endpoint}/health", timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT_SECS)) as response:
                     if response.status == 200:
-                        data = await response.json()
+                        _ = await response.json()
                         logger.debug(f"✅ {agent_name} is healthy")
                         return True
                     else:
@@ -85,7 +93,7 @@ class AgentClient:
                         "token": token,
                         "collateral": collateral
                     },
-                    timeout=aiohttp.ClientTimeout(total=30)
+                    timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT_SECS)
                 ) as response:
                     if response.status == 200:
                         result = await response.json()
@@ -109,7 +117,7 @@ class AgentClient:
                         }
         
         except asyncio.TimeoutError:
-            logger.error("❌ Request timed out (30s)")
+            logger.error(f"❌ Request timed out ({HTTP_TIMEOUT_SECS}s)")
             return {
                 "success": False,
                 "approved": False,
@@ -152,7 +160,7 @@ class AgentClient:
                         "location": location,
                         "property_type": property_type
                     },
-                    timeout=aiohttp.ClientTimeout(total=30)
+                    timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT_SECS)
                 ) as response:
                     if response.status == 200:
                         result = await response.json()
@@ -211,7 +219,7 @@ class AgentClient:
                         "sell_token": sell_token,
                         "buy_token": buy_token
                     },
-                    timeout=aiohttp.ClientTimeout(total=30)
+                    timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT_SECS)
                 ) as response:
                     if response.status == 200:
                         result = await response.json()
@@ -268,7 +276,7 @@ class AgentClient:
                         "portfolio_value": portfolio_value,
                         "strategy": strategy
                     },
-                    timeout=aiohttp.ClientTimeout(total=30)
+                    timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT_SECS)
                 ) as response:
                     if response.status == 200:
                         result = await response.json()

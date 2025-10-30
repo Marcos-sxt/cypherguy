@@ -20,6 +20,7 @@ import logging
 
 # Import agent client
 from services.agent_client import agent_client
+from backend.settings import CORS_ORIGINS
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -37,7 +38,7 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -91,8 +92,14 @@ class AutomationResponse(BaseModel):
     message: str
     tx_hash: Optional[str] = None
 
-# Note: Backend now uses agent_client from services/agent_client.py
-# which communicates with the actual uAgents agents
+# Startup readiness
+@app.on_event("startup")
+async def on_startup():
+    try:
+        results = await agent_client.check_all_agents_health()
+        logger.info(f"Agents health on startup: {results}")
+    except Exception as e:
+        logger.warning(f"Startup health check failed: {e}")
 
 # API Endpoints
 
@@ -106,14 +113,24 @@ async def root():
             "credit": "/credit",
             "rwa": "/rwa",
             "trade": "/trade",
-            "automation": "/automation"
-        }
+            "automation": "/automation",
+            "agents_health": "/agents/health",
+        },
     }
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "service": "cypherguy-backend"}
+
+@app.get("/agents/health")
+async def agents_health():
+    """Aggregated health of all agents"""
+    try:
+        return await agent_client.check_all_agents_health()
+    except Exception as e:
+        logger.error(f"Agents health error: {e}")
+        raise HTTPException(status_code=500, detail="Health check failed")
 
 @app.post("/credit", response_model=CreditResponse)
 async def request_credit(request: CreditRequest):
