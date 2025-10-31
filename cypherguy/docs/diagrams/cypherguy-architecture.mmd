@@ -1,38 +1,32 @@
 graph TB
-    subgraph "User Interface"
-        UI[Frontend<br/>React + Vite]
-        Dashboard[Dashboard]
-        Chat[Chat Interface]
-    end
+    %% User Interface Layer
+    UI[Frontend<br/>React + Vite]
+    Dashboard[Dashboard]
+    Chat[Chat Interface]
 
-    subgraph "ASI:One Integration"
-        ASIOne[ASI:One Chat Protocol]
-        Agentverse[Agentverse Mailbox]
-        Almanac[Almanac Registry]
-    end
+    %% ASI:One Integration
+    ASIOne[ASI:One Chat Protocol]
+    Agentverse[Agentverse Mailbox]
+    Almanac[Almanac Registry]
 
-    subgraph "Multi-Agent System"
-        Intake[IntakeAgent<br/>💬 Natural Language<br/>Routing]
-        Policy[PolicyAgent<br/>🛡️ MeTTa Rules<br/>Validation]
-        Compute[ComputeAgent<br/>🧮 MPC Credit Score<br/>Calculation]
-        Executor[ExecutorAgent<br/>⛓️ Solana TX<br/>Execution]
-    end
+    %% Multi-Agent System
+    Intake[IntakeAgent<br/>💬 Natural Language<br/>Routing]
+    Policy[PolicyAgent<br/>🛡️ MeTTa Rules<br/>Validation]
+    Compute[ComputeAgent<br/>🧮 MPC Credit Score<br/>Calculation]
+    Executor[ExecutorAgent<br/>⛓️ Solana TX<br/>Execution]
 
-    subgraph "Knowledge & Logic"
-        MeTTa[MeTTa Engine<br/>Policy Rules]
-        MPC[MPC Simulation<br/>Private Computation]
-    end
+    %% Knowledge & Logic
+    MeTTa[MeTTa Engine<br/>Policy Rules]
+    MPC[MPC Simulation<br/>Private Computation]
 
-    subgraph "Solana Blockchain"
-        Solana[Solana Devnet]
-        SPL[SPL Tokens]
-        SmartContract[Smart Contracts]
-    end
+    %% Solana Blockchain
+    Solana[Solana Devnet]
+    SPL[SPL Tokens]
+    SmartContract[Smart Contracts]
 
-    subgraph "External Services"
-        Jupiter[Jupiter API<br/>Price Feeds]
-        Arcium[Arcium MPC<br/>Private Computation]
-    end
+    %% External Services
+    Jupiter[Jupiter API<br/>Price Feeds]
+    Arcium[Arcium MPC<br/>Private Computation]
 
     %% User Flow
     UI --> Dashboard
@@ -57,7 +51,7 @@ graph TB
     Solana --> SPL
     Solana --> SmartContract
 
-    %% Styling
+    %% Styling - Clean colors, no gray backgrounds
     classDef agent fill:#6366f1,stroke:#4f46e5,stroke-width:3px,color:#fff
     classDef solana fill:#14f195,stroke:#00d9ff,stroke-width:2px,color:#000
     classDef asi fill:#ff6b6b,stroke:#ee5a6f,stroke-width:2px,color:#fff
