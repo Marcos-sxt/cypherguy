@@ -69,6 +69,11 @@ class HTTPAutomationRequest(PydanticBaseModel):
     portfolio_value: float
     strategy: str
 
+class HTTPChatRequest(PydanticBaseModel):
+    """Request for chat endpoint"""
+    message: str
+    user_id: str = "default_user"
+
 # ============================================================================
 # MESSAGE MODELS (Pydantic para type safety)
 # ============================================================================
@@ -507,6 +512,124 @@ async def http_process_automation(request: HTTPAutomationRequest):
 async def health():
     """Health check endpoint"""
     return {"status": "healthy", "agent": "intake"}
+
+@http_app.post("/chat")
+async def chat_endpoint(request: HTTPChatRequest):
+    """
+    Simple HTTP chat endpoint for frontend integration
+    Receives text and returns AI response based on NLP parsing
+    """
+    text = request.message.strip()
+    user_id = request.user_id
+    
+    if not text:
+        return {"response": "Please send a message!", "error": "empty_message"}
+    
+    # Simple NLP parsing (same logic as chat protocol)
+    text_lower = text.lower()
+    
+    # Extract numbers and tokens
+    numbers = re.findall(r'\d+', text)
+    amounts = [int(n) for n in numbers if int(n) > 0]
+    tokens = []
+    for token in ["usdc", "sol", "eth", "usdt", "btc"]:
+        if token in text_lower:
+            tokens.append(token.upper())
+    
+    # Intent detection
+    normalized_text = text_lower.replace("do borrow", "borrow").replace("to borrow", "borrow")
+    
+    # Credit intent
+    if any(word in normalized_text for word in ["credit", "loan", "borrow"]):
+        if amounts and tokens:
+            response = (
+                f"✅ Perfect! Processing your credit request:\n\n"
+                f"💰 Amount: {amounts[0]} USDC\n"
+                f"🔒 Collateral: {tokens[0]}\n\n"
+                f"🔍 Checking credit policy...\n"
+                f"📊 Calculating credit score...\n\n"
+                f"⏳ This may take a moment while I contact PolicyAgent and ComputeAgent!"
+            )
+        elif amounts:
+            response = (
+                f"✅ Amount: {amounts[0]} USDC\n\n"
+                f"What collateral would you like to use?\n"
+                f"(e.g., SOL, ETH, USDC)"
+            )
+        else:
+            response = (
+                "💳 I can help you get a private DeFi loan!\n\n"
+                "I'll need:\n"
+                "- Amount (USDC)\n"
+                "- Collateral type\n\n"
+                "Your credit score will be calculated privately using MPC. "
+                "How much would you like to borrow?"
+            )
+    
+    # RWA intent
+    elif any(word in text_lower for word in ["rwa", "tokenize", "property", "asset"]):
+        response = (
+            "🏢 I can help tokenize your real-world assets!\n\n"
+            "I'll need:\n"
+            "- Property value\n"
+            "- Location\n"
+            "- Property type\n\n"
+            "I'll check compliance rules automatically. "
+            "What asset would you like to tokenize?"
+        )
+    
+    # Trade intent
+    elif any(word in text_lower for word in ["trade", "swap", "exchange"]):
+        response = (
+            "🌑 I can help you trade privately in a dark pool!\n\n"
+            "I'll need:\n"
+            "- Amount to sell\n"
+            "- Tokens (from/to)\n\n"
+            "Your order will be matched privately without moving the market. "
+            "What would you like to trade?"
+        )
+    
+    # Automation intent
+    elif any(word in text_lower for word in ["automat", "optimize", "manage"]):
+        response = (
+            "🤖 I can automatically optimize your portfolio!\n\n"
+            "I'll need:\n"
+            "- Portfolio value\n"
+            "- Strategy (yield farming, balanced, etc)\n\n"
+            "I'll monitor markets 24/7 and rebalance for best yields. "
+            "What strategy interests you?"
+        )
+    
+    # Help intent
+    elif any(word in text_lower for word in ["help", "what", "how"]):
+        response = (
+            "🦸 I'm CypherGuy - your personal DeFi assistant!\n\n"
+            "I help you with complex DeFi operations using AI agents:\n\n"
+            "💳 **Private DeFi Credit** - Get loans without revealing your portfolio\n"
+            "🏢 **RWA Compliance** - Tokenize real-world assets following regulations\n"
+            "🌑 **Dark Pool Trading** - Trade large amounts privately\n"
+            "🤖 **DeFi Automation** - Auto-optimize for best yields\n\n"
+            "Just tell me what you need!"
+        )
+    
+    # Default response
+    else:
+        response = (
+            "I can help with:\n"
+            "💳 Credit/Loans\n"
+            "🏢 RWA Tokenization\n"
+            "🌑 Private Trading\n"
+            "🤖 Portfolio Automation\n\n"
+            "Which one interests you? Just tell me what you'd like to do!"
+        )
+    
+    logger.info(f"💬 Chat HTTP endpoint: user={user_id}, text='{text[:50]}...', response_length={len(response)}")
+    
+    return {
+        "response": response,
+        "user_id": user_id,
+        "intent": "credit" if any(word in normalized_text for word in ["credit", "loan", "borrow"]) else None
+    }
 
 # ============================================================================
 # ASI:ONE CHAT PROTOCOL (For ASI Alliance Hackathon)

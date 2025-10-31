@@ -4,6 +4,7 @@ import ChatMessage from '@/components/ChatMessage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Sparkles } from 'lucide-react';
+import { sendChatMessage } from '@/services/agentService';
 
 interface Message {
   id: string;
@@ -31,7 +32,7 @@ export default function Chat() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim() || isTyping) return;
 
     const userMessage: Message = {
@@ -41,26 +42,32 @@ export default function Chat() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const messageText = input;
     setInput('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "That's a great question! Let me analyze your portfolio and provide some insights...",
-        "I can help you with that. Based on current market conditions...",
-        "Interesting! Here's what I found after checking the latest DeFi protocols...",
-      ];
+    try {
+      // Call IntakeAgent real endpoint
+      const response = await sendChatMessage(messageText, 'user');
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: response.response || 'Sorry, I could not process that request.',
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again later!',
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
