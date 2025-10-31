@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import ChatMessage from '@/components/ChatMessage';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ interface Message {
 }
 
 export default function Chat() {
+  const location = useLocation();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -22,6 +24,7 @@ export default function Chat() {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [hasInitialMessage, setHasInitialMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -32,18 +35,16 @@ export default function Chat() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isTyping) return;
+  const handleSendMessage = async (messageText: string) => {
+    if (!messageText.trim() || isTyping) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input,
+      content: messageText,
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    const messageText = input;
-    setInput('');
     setIsTyping(true);
 
     try {
@@ -69,6 +70,26 @@ export default function Chat() {
       setIsTyping(false);
     }
   };
+
+  const handleSend = async () => {
+    if (!input.trim() || isTyping) return;
+    const messageText = input;
+    setInput('');
+    await handleSendMessage(messageText);
+  };
+
+  // Handle initial message from navigation
+  useEffect(() => {
+    const initialMessage = (location.state as { initialMessage?: string })?.initialMessage;
+    if (initialMessage && !hasInitialMessage) {
+      setHasInitialMessage(true);
+      // Small delay to ensure UI is ready
+      setTimeout(() => {
+        handleSendMessage(initialMessage);
+      }, 500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state, hasInitialMessage]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

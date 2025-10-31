@@ -1,13 +1,41 @@
+import { useNavigate } from 'react-router-dom';
 import { CreditCard, Moon, Building2, Bot, ArrowRight } from 'lucide-react';
 
 const actions = [
-  { icon: CreditCard, label: 'Get Loan', color: 'from-primary to-primary-glow' },
-  { icon: Moon, label: 'Trade Privately', color: 'from-purple-500 to-purple-700' },
-  { icon: Building2, label: 'Tokenize Asset', color: 'from-blue-500 to-blue-700' },
-  { icon: Bot, label: 'Auto-Invest', color: 'from-green-500 to-green-700' },
+  { 
+    icon: CreditCard, 
+    label: 'Get Loan', 
+    color: 'from-primary to-primary-glow',
+    message: 'I want to borrow some USDC'
+  },
+  { 
+    icon: Moon, 
+    label: 'Trade Privately', 
+    color: 'from-purple-500 to-purple-700',
+    message: 'I want to trade privately'
+  },
+  { 
+    icon: Building2, 
+    label: 'Tokenize Asset', 
+    color: 'from-blue-500 to-blue-700',
+    message: 'I want to tokenize a property'
+  },
+  { 
+    icon: Bot, 
+    label: 'Auto-Invest', 
+    color: 'from-green-500 to-green-700',
+    message: 'I want to optimize my portfolio automatically'
+  },
 ];
 
 export default function QuickActions() {
+  const navigate = useNavigate();
+
+  const handleActionClick = (message: string) => {
+    // Navigate to chat with pre-filled message
+    navigate('/chat', { state: { initialMessage: message } });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -21,7 +49,8 @@ export default function QuickActions() {
           return (
             <button
               key={action.label}
-              className="glass-card p-6 rounded-2xl hover-lift text-left group relative overflow-hidden"
+              onClick={() => handleActionClick(action.message)}
+              className="glass-card p-6 rounded-2xl hover-lift text-left group relative overflow-hidden cursor-pointer"
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
               <div className="relative space-y-3">
