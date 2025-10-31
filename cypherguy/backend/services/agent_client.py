@@ -7,7 +7,11 @@ import asyncio
 from typing import Dict, Any
 import logging
 
-from backend.settings import (
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from settings import (
     AGENT_INTAKE_URL,
     AGENT_POLICY_URL,
     AGENT_COMPUTE_URL,

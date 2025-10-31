@@ -20,7 +20,7 @@ import logging
 
 # Import agent client
 from services.agent_client import agent_client
-from backend.settings import CORS_ORIGINS
+from settings import CORS_ORIGINS
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
