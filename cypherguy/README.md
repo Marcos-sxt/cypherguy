@@ -4,7 +4,11 @@
 
 ## 🎯 What is CypherGuy?
 
-CypherGuy is an autonomous, encrypted, and verifiable DeFi execution layer for Solana that makes DeFi accessible to everyone.
+**CypherGuy** is a composable DeFi abstraction layer that makes decentralized finance accessible to everyone. Think of it as a unified, composable system that abstracts away all the complexity of DeFi protocols—credit, trading, tokenization, and automation—so anyone can use DeFi easily, without needing deep technical knowledge.
+
+Our goal is to build a **composable abstraction** where all DeFi operations become as simple as chatting. Everyone can leverage the full power of DeFi through natural language, powered by autonomous agents that handle the technical details behind the scenes.
+
+**At its core, CypherGuy is an autonomous, encrypted, and verifiable DeFi execution layer for Solana** that transforms complex blockchain operations into simple conversations.
 
 ### Key Features:
 - 💳 **Private DeFi Credit** - Get loans without revealing your full portfolio
