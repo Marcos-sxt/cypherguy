@@ -1,25 +1,30 @@
 graph LR
-    %% User Experience Layer
-    A[User] -->|Natural Language| B[Frontend UI]
-    B -->|Chat Messages| C[IntakeAgent]
+    subgraph "User Experience Layer"
+        A[User] -->|Natural Language| B[Frontend UI]
+        B -->|Chat Messages| C[IntakeAgent]
+    end
 
-    %% Agent Orchestration Layer
-    C -->|Route| D[PolicyAgent]
-    C -->|Route| E[ComputeAgent]
-    C -->|Route| F[ExecutorAgent]
+    subgraph "Agent Orchestration Layer"
+        C -->|Route| D[PolicyAgent]
+        C -->|Route| E[ComputeAgent]
+        C -->|Route| F[ExecutorAgent]
+    end
 
-    %% Computation Layer
-    D -->|MeTTa Rules| G[Policy Evaluation]
-    E -->|MPC Simulation| H[Credit Scoring]
-    E -->|Jupiter API| I[Price Data]
+    subgraph "Computation Layer"
+        D -->|MeTTa Rules| G[Policy Evaluation]
+        E -->|MPC Simulation| H[Credit Scoring]
+        E -->|Jupiter API| I[Price Data]
+    end
 
-    %% Execution Layer
-    F -->|Solana SDK| J[Blockchain TX]
-    J -->|Deploy| K[Solana Devnet]
+    subgraph "Execution Layer"
+        F -->|Solana SDK| J[Blockchain TX]
+        J -->|Deploy| K[Solana Devnet]
+    end
 
-    %% ASI Ecosystem
-    C -.->|mailbox=True| L[Agentverse]
-    L -->|Discovery| M[ASI:One App]
+    subgraph "ASI Ecosystem"
+        C -.->|mailbox=True| L[Agentverse]
+        L -->|Discovery| M[ASI:One App]
+    end
 
     style A fill:#e0e7ff
     style B fill:#3b82f6
