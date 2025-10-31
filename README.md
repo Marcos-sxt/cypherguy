@@ -521,6 +521,16 @@ python agents/executor_agent.py
 
 ---
 
+## 👤 Team
+
+- **[Marcos Morais](https://www.linkedin.com/in/marcos-morais79/):** Fullstack & Blockchain Dev
+- **[Davi Jesus](https://www.linkedin.com/in/davi-nascimento-de-jesus/):** UI/UX Designer & Filmmaker
+- **[Victor Mafra](https://www.linkedin.com/in/victorvmafra/):** Fullstack & Blockchain Dev
+
+- **Twitter:** [@cypherguyapp](https://x.com/cypherguyapp)
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
