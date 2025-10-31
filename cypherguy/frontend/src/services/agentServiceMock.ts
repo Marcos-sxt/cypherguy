@@ -37,7 +37,7 @@ export async function sendChatMessageMock(
   // Simulate network delay (realistic response time)
   await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
   
-  const textLower = message.toLowerCase();
+  const textLower = message.toLowerCase().trim();
   
   // Get or create conversation context
   let context = conversationContexts.get(userId) || {
@@ -48,28 +48,74 @@ export async function sendChatMessageMock(
     messages: []
   };
   
-  // Extract numbers and tokens
+  // Extract numbers and tokens (better parsing)
   const numbers = message.match(/\d+/g);
   const amounts = numbers ? numbers.map(n => parseInt(n)).filter(n => n > 0) : [];
   
+  // Better token detection (including in phrases like "100 USDC")
   const tokens: string[] = [];
-  ['usdc', 'sol', 'eth', 'usdt', 'btc'].forEach(token => {
-    if (textLower.includes(token)) {
-      tokens.push(token.toUpperCase());
+  const tokenPatterns = [
+    /\b(usdc|sol|eth|usdt|btc)\b/i,
+    /(usdc|sol|eth|usdt|btc)/i
+  ];
+  
+  tokenPatterns.forEach(pattern => {
+    const matches = message.match(pattern);
+    if (matches) {
+      matches.forEach(m => {
+        const token = m.toUpperCase();
+        if (!tokens.includes(token)) tokens.push(token);
+      });
     }
   });
   
-  const normalizedText = textLower.replace('do borrow', 'borrow').replace('to borrow', 'borrow');
+  // Normalize text for intent detection
+  const normalizedText = textLower
+    .replace('do borrow', 'borrow')
+    .replace('to borrow', 'borrow')
+    .replace('wants to', 'want')
+    .replace('want to', 'want');
   
   // Update context based on current message
   context.messages.push(message);
   
-  // ===== CREDIT FLOW (Enhanced with longer conversations) =====
-  if (normalizedText.includes('credit') || normalizedText.includes('loan') || normalizedText.includes('borrow') || context.intent === 'credit') {
+  // ===== CREDIT FLOW (Fixed and Enhanced) =====
+  const isCreditIntent = normalizedText.includes('credit') || 
+                         normalizedText.includes('loan') || 
+                         normalizedText.includes('borrow') ||
+                         context.intent === 'credit';
+  
+  if (isCreditIntent) {
     context.intent = 'credit';
     
-    // Step 1: Initial interest in credit
-    if (context.step === 'initial' && amounts.length === 0 && tokens.length === 0) {
+    // Step 1: Initial interest in credit (no amount/collateral yet)
+    if ((context.step === 'initial' || !context.step) && !context.amount) {
+      // Check if user provided amount in initial message
+      if (amounts.length > 0) {
+        context.amount = amounts[0];
+        if (tokens.length > 0) {
+          // Both provided at once
+          context.collateral = tokens[0];
+          context.step = 'processing';
+          conversationContexts.set(userId, context);
+          return {
+            response: `✅ Perfect! I've got your request:\n\n💰 Amount: ${amounts[0]} USDC\n🔒 Collateral: ${tokens[0]}\n\nNow let me work my magic! 🔮\n\n📋 Step 1/3: Checking policy rules...\n   → Validating amount limits (min: $100, max: $100k)\n   → Ensuring collateral ratio compliance\n\n📊 Step 2/3: Calculating your credit score privately...\n   → Using MPC to analyze your on-chain history\n   → No personal data exposed - fully privacy-preserving\n\n⛓️ Step 3/3: Preparing Solana transaction...\n   → Building smart contract interaction\n   → Setting up escrow for collateral\n\nThis will take just a moment... ⏳`,
+            user_id: userId,
+            intent: 'credit',
+          };
+        } else {
+          // Only amount provided
+          context.step = 'credit_collateral';
+          conversationContexts.set(userId, context);
+          return {
+            response: `✅ Got it! ${amounts[0]} USDC - that's a great starting point!\n\nNow, what would you like to use as collateral? Some popular options:\n\n🔵 SOL - Very liquid, typically 70-80% LTV\n🔵 ETH - Strong asset, around 75-85% LTV\n🔵 BTC - Highest LTV, up to 90%\n🟡 USDC/USDT - Stable, lower risk\n\nWhich asset do you want to lock as collateral?\n\n(Just type the token symbol - e.g., SOL, ETH, BTC)`,
+            user_id: userId,
+            intent: 'credit',
+          };
+        }
+      }
+      
+      // No amount yet, ask for it
       context.step = 'credit_amount';
       conversationContexts.set(userId, context);
       return {
@@ -79,12 +125,12 @@ export async function sendChatMessageMock(
       };
     }
     
-    // Step 2: User provided amount
+    // Step 2: We're in credit flow, user provided amount
     if (context.step === 'credit_amount' && amounts.length > 0 && !context.amount) {
       context.amount = amounts[0];
       
       if (tokens.length > 0) {
-        // User provided both amount and collateral
+        // User provided both
         context.collateral = tokens[0];
         context.step = 'processing';
         conversationContexts.set(userId, context);
@@ -95,7 +141,7 @@ export async function sendChatMessageMock(
         };
       }
       
-      // Only amount provided
+      // Only amount
       context.step = 'credit_collateral';
       conversationContexts.set(userId, context);
       return {
@@ -105,24 +151,34 @@ export async function sendChatMessageMock(
       };
     }
     
-    // Step 3: User provided collateral after amount
-    if (context.step === 'credit_collateral' && context.amount && (tokens.length > 0 || textLower.match(/\b(sol|eth|btc|usdc|usdt)\b/))) {
-      const collateralToken = tokens[0] || textLower.match(/\b(sol|eth|btc|usdc|usdt)\b/)?.[0].toUpperCase() || 'SOL';
-      context.collateral = collateralToken;
-      context.step = 'processing';
-      conversationContexts.set(userId, context);
+    // Step 3: Waiting for collateral, user provided it
+    if (context.step === 'credit_collateral' && context.amount && !context.collateral) {
+      // Check if user provided token
+      if (tokens.length > 0 || textLower.match(/\b(sol|eth|btc|usdc|usdt)\b/)) {
+        const collateralToken = tokens[0] || textLower.match(/\b(sol|eth|btc|usdc|usdt)\b/)?.[0].toUpperCase() || 'SOL';
+        context.collateral = collateralToken;
+        context.step = 'processing';
+        conversationContexts.set(userId, context);
+        
+        return {
+          response: `✅ Excellent choice! ${collateralToken} as collateral works great.\n\nYour Loan Details:\n💰 Amount: ${context.amount} USDC\n🔒 Collateral: ${collateralToken}\n\n🔍 Now processing your request...\n\nI'm checking:\n1️⃣ Policy compliance (amount within limits, collateral ratio OK)\n2️⃣ Credit score via private MPC computation\n3️⃣ Current market conditions for best rates\n\nThis usually takes 10-30 seconds. I'll get back to you with the terms shortly! ⏳\n\nWhile we wait, did you know this loan uses zero-knowledge proofs to keep your portfolio private? Pretty cool, right?`,
+          user_id: userId,
+          intent: 'credit',
+        };
+      }
       
+      // Still in collateral step, remind
+      conversationContexts.set(userId, context);
       return {
-        response: `✅ Excellent choice! ${collateralToken} as collateral works great.\n\nYour Loan Details:\n💰 Amount: ${context.amount} USDC\n🔒 Collateral: ${collateralToken}\n\n🔍 Now processing your request...\n\nI'm checking:\n1️⃣ Policy compliance (amount within limits, collateral ratio OK)\n2️⃣ Credit score via private MPC computation\n3️⃣ Current market conditions for best rates\n\nThis usually takes 10-30 seconds. I'll get back to you with the terms shortly! ⏳\n\nWhile we wait, did you know this loan uses zero-knowledge proofs to keep your portfolio private? Pretty cool, right?`,
+        response: `I need to know what you want to use as collateral. Some options:\n\n🔵 SOL - Very liquid, typically 70-80% LTV\n🔵 ETH - Strong asset, around 75-85% LTV\n🔵 BTC - Highest LTV, up to 90%\n\nWhich one would you like? (Just type: SOL, ETH, or BTC)`,
         user_id: userId,
         intent: 'credit',
       };
     }
     
-    // Step 4: Processing complete (simulated) - after user confirms or after processing time
-    if ((context.step === 'processing' || context.step === 'credit_amount') && context.amount && context.collateral) {
-      // If user says yes/approve or just wait, show results
-      if (textLower.includes('yes') || textLower.includes('approve') || textLower.includes('confirm') || !textLower.match(/\b(sol|eth|btc|usdc|usdt)\b/)) {
+    // Step 4: Processing or amount provided, wait or confirm
+    if (context.step === 'processing' && context.amount && context.collateral) {
+      // Show results after processing
       context.step = 'completed';
       const rate = (3.5 + Math.random() * 2).toFixed(2);
       conversationContexts.set(userId, context);
@@ -135,12 +191,33 @@ export async function sendChatMessageMock(
     }
   }
   
-  // ===== RWA FLOW (Complete Enhanced Flow) =====
-  if (textLower.includes('rwa') || textLower.includes('tokenize') || textLower.includes('property') || textLower.includes('asset') || context.intent === 'rwa') {
+  // ===== RWA FLOW (Fixed) =====
+  const isRWAIntent = textLower.includes('rwa') || 
+                      textLower.includes('tokenize') || 
+                      textLower.includes('property') || 
+                      textLower.includes('asset') ||
+                      context.intent === 'rwa';
+  
+  if (isRWAIntent) {
     context.intent = 'rwa';
     
-    // Step 1: Initial interest
-    if (context.step === 'initial' || context.step === 'rwa_initial') {
+    // Step 1: Initial or reset
+    if (!context.step || context.step === 'initial' || context.step === 'rwa_initial') {
+      // Check if user already said property type
+      const propertyTypes = ['house', 'property', 'building', 'commercial', 'residential', 'land', 'apartment', 'condo'];
+      if (propertyTypes.some(type => textLower.includes(type))) {
+        context.propertyType = textLower.includes('commercial') ? 'Commercial' : 
+                               textLower.includes('residential') ? 'Residential' : 
+                               textLower.includes('land') ? 'Land' : 'Residential';
+        context.step = 'rwa_value';
+        conversationContexts.set(userId, context);
+        return {
+          response: `✅ ${context.propertyType} property - got it!\n\nNow I need to know the estimated value of your property. This helps us:\n- Set the token supply\n- Determine compliance requirements\n- Calculate token price\n\nWhat's the estimated value of your property?\n\n(Just give me a number in USD, e.g., "500000" or "1.5 million")`,
+          user_id: userId,
+          intent: 'rwa',
+        };
+      }
+      
       context.step = 'rwa_type';
       conversationContexts.set(userId, context);
       return {
@@ -165,6 +242,14 @@ export async function sendChatMessageMock(
           intent: 'rwa',
         };
       }
+      
+      // Still waiting for property type
+      conversationContexts.set(userId, context);
+      return {
+        response: `What type of property are you looking to tokenize?\n\nOptions:\n🏠 Residential property\n🏭 Commercial building\n🌳 Land\n🏢 Apartment/Condo\n\nJust tell me what type of property you have!`,
+        user_id: userId,
+        intent: 'rwa',
+      };
     }
     
     // Step 3: Get property value
@@ -180,8 +265,8 @@ export async function sendChatMessageMock(
     }
     
     // Step 4: Get location
-    if (context.step === 'rwa_location' && !context.location && textLower.length > 5) {
-      context.location = message; // Store the location as provided
+    if (context.step === 'rwa_location' && !context.location && textLower.length > 3 && !amounts.length) {
+      context.location = message;
       context.step = 'rwa_processing';
       conversationContexts.set(userId, context);
       return {
@@ -192,7 +277,7 @@ export async function sendChatMessageMock(
     }
     
     // Step 5: Processing complete
-    if (context.step === 'rwa_processing' && context.amount && context.location && (textLower.includes('yes') || textLower.includes('ok') || textLower.includes('continue'))) {
+    if (context.step === 'rwa_processing' && context.amount && context.location) {
       context.step = 'rwa_completed';
       const tokenId = `RWA_${userId.slice(0, 6)}_${Date.now().toString().slice(-6)}`;
       conversationContexts.set(userId, context);
@@ -203,14 +288,44 @@ export async function sendChatMessageMock(
         intent: 'rwa',
       };
     }
+    
+    // Fallback: if in RWA flow but step unclear, continue flow
+    if (context.intent === 'rwa') {
+      conversationContexts.set(userId, context);
+      // Try to continue based on what's missing
+      if (!context.propertyType) {
+        return {
+          response: `What type of property are you looking to tokenize?\n\n(e.g., "a property", "my house", "commercial building")`,
+          user_id: userId,
+          intent: 'rwa',
+        };
+      } else if (!context.amount) {
+        return {
+          response: `What's the estimated value of your property?\n\n(Just give me a number in USD)`,
+          user_id: userId,
+          intent: 'rwa',
+        };
+      } else if (!context.location) {
+        return {
+          response: `Where is this property located?\n\n(Format: City, State/Country)`,
+          user_id: userId,
+          intent: 'rwa',
+        };
+      }
+    }
   }
   
-  // ===== TRADE FLOW (Complete Enhanced Flow) =====
-  if (textLower.includes('trade') || textLower.includes('swap') || textLower.includes('exchange') || context.intent === 'trade') {
+  // ===== TRADE FLOW (Fixed) =====
+  const isTradeIntent = textLower.includes('trade') || 
+                        textLower.includes('swap') || 
+                        textLower.includes('exchange') ||
+                        context.intent === 'trade';
+  
+  if (isTradeIntent) {
     context.intent = 'trade';
     
-    // Step 1: Initial interest
-    if (context.step === 'initial' || context.step === 'trade_initial') {
+    // Step 1: Initial
+    if (!context.step || context.step === 'initial' || context.step === 'trade_initial') {
       context.step = 'trade_details';
       conversationContexts.set(userId, context);
       return {
@@ -223,7 +338,7 @@ export async function sendChatMessageMock(
     // Step 2: Parse trade details
     if (context.step === 'trade_details') {
       // Try to extract: amount, sell token, buy token
-      if (amounts.length > 0) {
+      if (amounts.length > 0 && !context.amount) {
         context.amount = amounts[0];
       }
       
@@ -233,19 +348,17 @@ export async function sendChatMessageMock(
       
       if (sellMatch) {
         const amountFromText = sellMatch[1] ? parseInt(sellMatch[1]) : (amounts[0] || undefined);
-        if (amountFromText) context.amount = amountFromText;
-        context.sellToken = sellMatch[2]?.toUpperCase() || tokens[0] || 'SOL';
-      } else if (amounts.length > 0 && tokens.length > 0) {
-        context.amount = amounts[0];
+        if (amountFromText && !context.amount) context.amount = amountFromText;
+        if (!context.sellToken) context.sellToken = sellMatch[2]?.toUpperCase() || tokens[0] || 'SOL';
+      } else if (amounts.length > 0 && tokens.length > 0 && !context.sellToken) {
         context.sellToken = tokens[0];
       }
       
       if (forMatch) {
         context.buyToken = forMatch[1]?.toUpperCase() || 'USDC';
-      } else if (tokens.length > 1) {
+      } else if (tokens.length > 1 && !context.buyToken) {
         context.buyToken = tokens[1];
-      } else if (tokens.length === 1 && context.sellToken) {
-        // Only one token mentioned, assume they want to buy USDC
+      } else if (tokens.length === 1 && context.sellToken && !context.buyToken) {
         context.buyToken = 'USDC';
       }
       
@@ -259,7 +372,7 @@ export async function sendChatMessageMock(
           intent: 'trade',
         };
       } else {
-        // Missing info, ask what's needed
+        // Missing info
         let missing = [];
         if (!context.amount) missing.push('amount');
         if (!context.sellToken) missing.push('token to sell');
@@ -275,8 +388,7 @@ export async function sendChatMessageMock(
     }
     
     // Step 3: Processing complete
-    if (context.step === 'trade_processing' && context.amount && context.sellToken && context.buyToken && (textLower.includes('yes') || textLower.includes('ok'))) {
-      // Simulate price calculation
+    if (context.step === 'trade_processing' && context.amount && context.sellToken && context.buyToken) {
       const priceRatio = context.sellToken === 'SOL' ? 150 : context.sellToken === 'ETH' ? 3000 : 65000;
       const receiveAmount = (context.amount * priceRatio).toFixed(2);
       context.step = 'trade_completed';
@@ -290,12 +402,17 @@ export async function sendChatMessageMock(
     }
   }
   
-  // ===== AUTOMATION FLOW (Complete Enhanced Flow) =====
-  if (textLower.includes('automat') || textLower.includes('optimize') || textLower.includes('manage') || context.intent === 'automation') {
+  // ===== AUTOMATION FLOW (Fixed) =====
+  const isAutomationIntent = textLower.includes('automat') || 
+                             textLower.includes('optimize') || 
+                             textLower.includes('manage') ||
+                             context.intent === 'automation';
+  
+  if (isAutomationIntent) {
     context.intent = 'automation';
     
-    // Step 1: Initial interest
-    if (context.step === 'initial' || context.step === 'auto_initial') {
+    // Step 1: Initial
+    if (!context.step || context.step === 'initial' || context.step === 'auto_initial') {
       context.step = 'auto_portfolio';
       conversationContexts.set(userId, context);
       return {
@@ -332,14 +449,21 @@ export async function sendChatMessageMock(
           intent: 'automation',
         };
       }
+      
+      // Still waiting for strategy
+      conversationContexts.set(userId, context);
+      return {
+        response: `Which strategy would you like?\n\n💰 Yield Farming\n⚖️ Balanced\n🚀 Aggressive\n🛡️ Conservative\n\nJust say the name of the strategy!`,
+        user_id: userId,
+        intent: 'automation',
+      };
     }
     
     // Step 4: Processing complete
-    if (context.step === 'auto_processing' && context.portfolioValue && context.strategy && (textLower.includes('yes') || textLower.includes('ok') || textLower.includes('show'))) {
+    if (context.step === 'auto_processing' && context.portfolioValue && context.strategy) {
       context.step = 'auto_completed';
       conversationContexts.set(userId, context);
       
-      // Generate allocation based on strategy
       const allocations = {
         'Yield': { SOL: 30, ETH: 25, USDC: 20, BTC: 15, Others: 10 },
         'Balanced': { SOL: 25, ETH: 20, USDC: 30, BTC: 15, Others: 10 },
@@ -355,10 +479,32 @@ export async function sendChatMessageMock(
         intent: 'automation',
       };
     }
+    
+    // Fallback: continue automation flow
+    if (context.intent === 'automation') {
+      conversationContexts.set(userId, context);
+      if (!context.portfolioValue) {
+        return {
+          response: `What's your current portfolio value?\n\n(Just give me a rough number in USD)`,
+          user_id: userId,
+          intent: 'automation',
+        };
+      } else if (!context.strategy) {
+        return {
+          response: `Which strategy would you like? (Yield Farming, Balanced, Aggressive, or Conservative)`,
+          user_id: userId,
+          intent: 'automation',
+        };
+      }
+    }
   }
   
   // ===== GREETINGS & HELP =====
   if (textLower.includes('help') || textLower.includes('what') || textLower.includes('how') || textLower.includes('capabilities')) {
+    // Reset context on help
+    context.intent = undefined;
+    context.step = 'initial';
+    conversationContexts.set(userId, context);
     return {
       response: `🦸 I'm CypherGuy - Your Personal DeFi Assistant!\n\nI use AI agents to help you with complex DeFi operations:\n\n💳 Private DeFi Credit\n   → Borrow USDC privately using crypto as collateral\n   → Credit scoring with MPC (no data leaks)\n   → Fast, secure, blockchain-native\n\n🏢 RWA Tokenization\n   → Turn real-world assets into Solana tokens\n   → Full compliance automation\n   → Fractional ownership enabled\n\n🌑 Dark Pool Trading\n   → Trade large amounts privately\n   → No slippage, no front-running\n   → Better prices for big orders\n\n🤖 Portfolio Automation\n   → Auto-rebalance for optimal yields\n   → 24/7 market monitoring\n   → Strategy-based trading\n\nWhat would you like to explore? Just tell me what interests you! 🚀`,
       user_id: userId,
@@ -373,6 +519,9 @@ export async function sendChatMessageMock(
   }
   
   // ===== DEFAULT RESPONSE (Enhanced) =====
+  // Save context before returning default
+  conversationContexts.set(userId, context);
+  
   const suggestions = [
     '💳 "I want to borrow 1000 USDC"',
     '🏢 "I want to tokenize my property"',
