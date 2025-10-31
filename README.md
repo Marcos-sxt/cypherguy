@@ -555,25 +555,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Contact
-
-- **Project Lead:** [Your Name]
-- **Email:** [your.email@example.com]
-- **Twitter:** [@cypherguy]
-- **Discord:** [CypherGuy Community]
-
----
-
-## 🎉 Hackathon Submission
-
-**Event:** [Hackathon Name]  
-**Track:** DeFi + Privacy + AI  
-**Demo:** [Live Demo Link]  
-**Video:** [Demo Video Link]  
-**Code:** [GitHub Repository]
-
----
-
 **Built with ❤️ for the hackathon community**
 
 *"Making DeFi accessible to everyone, one tap at a time!"* 🦸‍♂️
