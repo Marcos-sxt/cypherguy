@@ -116,7 +116,8 @@ Os agents precisam de um `requirements.txt` na raiz do projeto ou no diretório 
 - **Branch:** `main`
 - **Root Directory:** `agents`
 - **Build Command:** `pip install -r requirements.txt` (ou deixe em branco se o requirements.txt estiver em agents/)
-- **Start Command:** `python intake_agent.py`
+- **Start Command:** `python intake_agent.py`  
+  > **Nota:** Como o Root Directory é `agents/`, o Python já está na pasta correta. O `sys.path.insert` nos agents garante que os imports de `tools/` e `metta/` funcionem corretamente.
 - **Instance Type:** `Free`
 
 **Variáveis de Ambiente:**
@@ -141,7 +142,8 @@ PERPLEXITY_API_KEY=your_key_here (opcional)
 - **Branch:** `main`
 - **Root Directory:** `agents`
 - **Build Command:** `pip install -r requirements.txt` (ou deixe em branco se o requirements.txt estiver em agents/)
-- **Start Command:** `python policy_agent.py`
+- **Start Command:** `python policy_agent.py`  
+  > **Nota:** O Render executa na pasta `agents/`, então `python policy_agent.py` funciona diretamente.
 - **Instance Type:** `Free`
 
 **Variáveis de Ambiente:**
@@ -165,7 +167,8 @@ PORT=8102
 - **Branch:** `main`
 - **Root Directory:** `agents`
 - **Build Command:** `pip install -r requirements.txt` (ou deixe em branco se o requirements.txt estiver em agents/)
-- **Start Command:** `python compute_agent.py`
+- **Start Command:** `python compute_agent.py`  
+  > **Nota:** Os imports de `tools/` são resolvidos automaticamente via `sys.path.insert` no início do arquivo.
 - **Instance Type:** `Free`
 
 **Variáveis de Ambiente:**
@@ -189,7 +192,8 @@ PORT=8103
 - **Branch:** `main`
 - **Root Directory:** `agents`
 - **Build Command:** `pip install -r requirements.txt` (ou deixe em branco se o requirements.txt estiver em agents/)
-- **Start Command:** `python executor_agent.py`
+- **Start Command:** `python executor_agent.py`  
+  > **Nota:** Mesmo padrão dos outros agents - funciona com Root Directory `agents/`.
 - **Instance Type:** `Free`
 
 **Variáveis de Ambiente:**
