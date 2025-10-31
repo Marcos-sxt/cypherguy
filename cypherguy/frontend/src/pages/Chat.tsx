@@ -44,12 +44,17 @@ export default function Chat() {
       content: messageText,
     };
 
+    // Add user message first to get full context
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
     try {
-      // Call IntakeAgent real endpoint
-      const response = await sendChatMessage(messageText, 'user');
+      // Call mock service with conversation history for context (including the just-added message)
+      const response = await sendChatMessage(
+        messageText, 
+        'user',
+        [...messages, userMessage].map(m => ({ role: m.role, content: m.content }))
+      );
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),

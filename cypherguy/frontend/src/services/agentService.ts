@@ -22,10 +22,14 @@ export interface ChatResponse {
  * Send a chat message - 100% MOCKED (no real agent connection)
  * Frontend is fully mocked for demo/hackathon purposes
  */
-export async function sendChatMessage(message: string, userId: string = 'default_user'): Promise<ChatResponse> {
+export async function sendChatMessage(
+  message: string, 
+  userId: string = 'default_user',
+  previousMessages?: Array<{ role: string; content: string }>
+): Promise<ChatResponse> {
   // Always use mock - frontend is 100% mocked
   const { sendChatMessageMock } = await import('./agentServiceMock');
-  return sendChatMessageMock(message, userId);
+  return sendChatMessageMock(message, userId, previousMessages);
 }
 
 /**
