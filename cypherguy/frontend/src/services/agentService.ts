@@ -1,8 +1,10 @@
 /**
  * Agent Service - Connect to IntakeAgent for chat functionality
+ * Falls back to mock if connection fails
  */
 
 const INTAKE_AGENT_URL = import.meta.env.VITE_INTAKE_AGENT_URL || 'https://cypherguy-1.onrender.com';
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_AGENT === 'true'; // Set to 'true' to force mock
 
 export interface ChatRequest {
   message: string;
@@ -18,8 +20,15 @@ export interface ChatResponse {
 
 /**
  * Send a chat message to IntakeAgent
+ * Falls back to mock if USE_MOCK is true or connection fails
  */
 export async function sendChatMessage(message: string, userId: string = 'default_user'): Promise<ChatResponse> {
+  // Use mock if explicitly enabled
+  if (USE_MOCK) {
+    const { sendChatMessageMock } = await import('./agentServiceMock');
+    return sendChatMessageMock(message, userId);
+  }
+
   try {
     const response = await fetch(`${INTAKE_AGENT_URL}/chat`, {
       method: 'POST',
@@ -39,13 +48,10 @@ export async function sendChatMessage(message: string, userId: string = 'default
     const data: ChatResponse = await response.json();
     return data;
   } catch (error) {
-    console.error('Error sending chat message:', error);
-    // Fallback mock response on error
-    return {
-      response: "Sorry, I'm having trouble connecting right now. Please try again later!",
-      user_id: userId,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
+    console.warn('IntakeAgent connection failed, using mock:', error);
+    // Fallback to mock on error
+    const { sendChatMessageMock } = await import('./agentServiceMock');
+    return sendChatMessageMock(message, userId);
   }
 }
 
