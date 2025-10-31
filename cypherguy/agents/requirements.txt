@@ -1,0 +1,22 @@
+# ASI Alliance
+uagents>=0.9.3
+
+# Backend
+fastapi==0.119.0
+uvicorn==0.37.0
+pydantic==2.12.3
+
+# Solana
+solana==0.36.9
+# anchorpy==0.19.1  # Removido: conflito de dependências e não é usado no backend
+
+# Utils
+aiohttp==3.13.1
+httpx>=0.28.0
+requests==2.32.5
+python-dotenv==1.0.0
+websockets==14.1
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1

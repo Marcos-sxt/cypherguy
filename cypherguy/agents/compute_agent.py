@@ -537,7 +537,9 @@ async def health():
 
 def run_http_server():
     """Rodar HTTP server em thread separada"""
-    uvicorn.run(http_app, host="0.0.0.0", port=8103, log_level="info")
+    import os
+    port = int(os.getenv("PORT", "8103"))  # Usar $PORT do Render ou default 8103
+    uvicorn.run(http_app, host="0.0.0.0", port=port, log_level="info")
 
 if __name__ == "__main__":
     logger.info("🧮 Starting AgentCompute...")

@@ -63,6 +63,8 @@ HTTP_TIMEOUT_SECS=30
 
 **Nota:** Os agents (8101-8104) precisam estar rodando separadamente. O backend funciona sem eles, mas os endpoints que dependem dos agents não funcionarão.
 
+⚠️ **IMPORTANTE:** Os erros de conexão com os agents no startup são ESPERADOS e não impedem o backend de funcionar. O backend responde normalmente, mas endpoints como `/credit` vão retornar erro até os agents estarem rodando.
+
 ### Verificações
 
 - ✅ `requirements.txt` está em `backend/requirements.txt` (copiado da raiz)
