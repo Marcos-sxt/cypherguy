@@ -1,0 +1,72 @@
+graph TB
+    subgraph "User Interface"
+        UI[Frontend<br/>React + Vite]
+        Dashboard[Dashboard]
+        Chat[Chat Interface]
+    end
+
+    subgraph "ASI:One Integration"
+        ASIOne[ASI:One Chat Protocol]
+        Agentverse[Agentverse Mailbox]
+        Almanac[Almanac Registry]
+    end
+
+    subgraph "Multi-Agent System"
+        Intake[IntakeAgent<br/>💬 Natural Language<br/>Routing]
+        Policy[PolicyAgent<br/>🛡️ MeTTa Rules<br/>Validation]
+        Compute[ComputeAgent<br/>🧮 MPC Credit Score<br/>Calculation]
+        Executor[ExecutorAgent<br/>⛓️ Solana TX<br/>Execution]
+    end
+
+    subgraph "Knowledge & Logic"
+        MeTTa[MeTTa Engine<br/>Policy Rules]
+        MPC[MPC Simulation<br/>Private Computation]
+    end
+
+    subgraph "Solana Blockchain"
+        Solana[Solana Devnet]
+        SPL[SPL Tokens]
+        SmartContract[Smart Contracts]
+    end
+
+    subgraph "External Services"
+        Jupiter[Jupiter API<br/>Price Feeds]
+        Arcium[Arcium MPC<br/>Private Computation]
+    end
+
+    %% User Flow
+    UI --> Dashboard
+    UI --> Chat
+    Chat --> Intake
+
+    %% ASI:One Integration
+    Intake -.->|mailbox=True| Agentverse
+    Agentverse --> ASIOne
+    Intake -.->|publish_manifest| Almanac
+
+    %% Agent Communication Flow
+    Intake -->|HTTP| Policy
+    Intake -->|HTTP| Compute
+    Intake -->|HTTP| Executor
+    Policy --> MeTTa
+    Compute --> MPC
+    Compute --> Jupiter
+
+    %% Solana Integration
+    Executor --> Solana
+    Solana --> SPL
+    Solana --> SmartContract
+
+    %% Styling
+    classDef agent fill:#6366f1,stroke:#4f46e5,stroke-width:3px,color:#fff
+    classDef solana fill:#14f195,stroke:#00d9ff,stroke-width:2px,color:#000
+    classDef asi fill:#ff6b6b,stroke:#ee5a6f,stroke-width:2px,color:#fff
+    classDef frontend fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
+    classDef service fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+
+    class Intake,Policy,Compute,Executor agent
+    class Solana,SPL,SmartContract solana
+    class ASIOne,Agentverse,Almanac asi
+    class UI,Dashboard,Chat frontend
+    class Jupiter,Arcium,MeTTa,MPC service
+

@@ -1,0 +1,39 @@
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant IntakeAgent
+    participant PolicyAgent
+    participant ComputeAgent
+    participant ExecutorAgent
+    participant Solana
+
+    User->>Frontend: "I want to borrow 1000 USDC"
+    Frontend->>IntakeAgent: POST /chat<br/>{message, user_id}
+    
+    IntakeAgent->>IntakeAgent: NLP Parsing<br/>Extract: amount, intent
+    
+    IntakeAgent-->>Frontend: Response: Ask for collateral
+    
+    User->>Frontend: "SOL"
+    Frontend->>IntakeAgent: POST /chat<br/>{message: "SOL"}
+    
+    IntakeAgent->>IntakeAgent: Update context<br/>amount=1000, collateral=SOL
+    
+    IntakeAgent->>PolicyAgent: HTTP POST /check<br/>{amount: 1000, collateral: "SOL"}
+    PolicyAgent->>PolicyAgent: MeTTa Rules Check<br/>MinAmount, MaxAmount, CollateralRatio
+    PolicyAgent-->>IntakeAgent: {approved: true, reason: "..."}
+    
+    IntakeAgent->>ComputeAgent: HTTP POST /compute<br/>{amount: 1000, collateral: "SOL"}
+    ComputeAgent->>ComputeAgent: MPC Credit Score<br/>Private computation
+    ComputeAgent->>Jupiter: GET Price (SOL/USDC)
+    ComputeAgent-->>IntakeAgent: {rate: 4.5%, score: 85}
+    
+    IntakeAgent->>ExecutorAgent: HTTP POST /execute<br/>{amount: 1000, memo: "..."}
+    ExecutorAgent->>ExecutorAgent: Build Transaction<br/>Transfer + Memo
+    ExecutorAgent->>Solana: Send Transaction
+    Solana-->>ExecutorAgent: Transaction Signature
+    ExecutorAgent-->>IntakeAgent: {tx_hash: "...", success: true}
+    
+    IntakeAgent-->>Frontend: Final Response<br/>{approved: true, rate: 4.5%, tx_hash: "..."}
+    Frontend-->>User: Show loan terms + TX hash
+
