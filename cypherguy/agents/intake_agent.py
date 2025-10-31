@@ -14,6 +14,7 @@ import re
 from datetime import datetime, timezone
 from uuid import uuid4
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel as PydanticBaseModel
 import uvicorn
 import threading
@@ -44,6 +45,15 @@ logger = logging.getLogger(__name__)
 
 # FastAPI app para endpoints HTTP
 http_app = FastAPI(title="IntakeAgent HTTP API")
+
+# Add CORS middleware para permitir requisições do frontend
+http_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens (para demo/hackathon)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Pydantic models para HTTP endpoints
 class HTTPCreditRequest(PydanticBaseModel):
